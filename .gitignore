@@ -1,0 +1,8 @@
+CMakeFiles
+*.swp
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.ppm
+*.o
+*.exe
