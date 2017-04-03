@@ -10,11 +10,3 @@
 
 * mpich
 * cmake
-
-```javascript
-console.log('dupa')
-```
-
-```cpp
-cout << "dupa" << endl;
-```
