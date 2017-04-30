@@ -4,7 +4,7 @@
 
 * `cmake .`
 * `make`
-* `./mandelbrot_set.exe`
+* `./mandelbrot.run -2 1 -1 1 0.003 && gnuplot plot.plt`
 
 ## Dependencies
 
