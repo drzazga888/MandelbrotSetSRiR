@@ -18,5 +18,6 @@
 ## Wersja nierównoległa
 
 * pliki mandelbrot_test.cpp i plot.plt napisane od zera
-* kompilacja - normalnie przez g++
+* kompilacja - normalnie przez g++:
+* g++ mandel_test.cpp Config.cpp -fext-numeric-literals
 * odpalanie: np. `/a.out -2 1 -1 1 0.003 && gnuplot plot.plt`
