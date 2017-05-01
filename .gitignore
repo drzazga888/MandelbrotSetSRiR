@@ -6,3 +6,4 @@ Makefile
 *.ppm
 *.o
 *.exe
+result.png
