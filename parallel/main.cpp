@@ -2,10 +2,12 @@
 #include <iomanip>
 #include <complex>
 #include <fstream>
+#include <mpe.h>
 #include "Config.h"
 #include "Server.h"
 #include "Client.h"
 #include "Utils.h"
+#include "MpeLogFlags.h"
 
 using std::cout;
 using std::endl;
@@ -68,11 +70,14 @@ int **mandelbrot(double minx, double maxx, double miny, double maxy, double step
 
 int main(int argc, char *argv[]) {
 	appConfig().initialize(argc, argv);
+    MPE_Init_log();
     int rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);
     int cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
 	MPI_Barrier(MPI_COMM_WORLD);
 	double time = MPI_Wtime();
 	if(appConfig().procRank == SERVER){
+        MPE_Describe_state(REQ_TO_WORK_SEND_START, REQ_TO_WORK_SEND_END, "request to work - send", "red");
+        
 		Server server;
 		server.run(time);	
 		int** board = server.getBoard();
@@ -85,6 +90,7 @@ int main(int argc, char *argv[]) {
 	else
 		Client().run(time); 
 	MPI_Barrier(MPI_COMM_WORLD);
+    MPE_Finish_log("mpe-logs");
 	MPI_Finalize();
     return 0;
 }

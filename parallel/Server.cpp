@@ -5,6 +5,8 @@
 #include "Utils.h"
 #include <stdlib.h>
 #include <unistd.h>
+#include <mpe.h>
+#include "MpeLogFlags.h"
 
 const int endMarker = -1;
 using namespace std;
@@ -57,7 +59,10 @@ void Server::run(double startTime){
 void Server::requestWorkTo(int clientId){
 	int pointData[2] = {board.getCurrentRow(), board.getCurrentCol()};
 //	cout << "Server::request Work To client Id: " << clientId << " with data: " << pointData[0] << ", " << pointData[1] << endl;
+	 
+	MPE_Log_event(REQ_TO_WORK_SEND_START, 0, "request to work send start");
 	MPI_Send(&pointData, 2, MPI_INT, clientId, PointDataMsg, MPI_COMM_WORLD);
+	MPE_Log_event(REQ_TO_WORK_SEND_END, 0, "request to work send end");
 }
 void Server::startListenerForCompletedWork(int clientId, MPI_Request& handle, int &valueHandler){
 //	cout << "Server::start Listener For Completed Work On Client: " << clientId << ", handle: " << &handle << endl;

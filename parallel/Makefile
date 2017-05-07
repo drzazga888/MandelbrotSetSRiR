@@ -1,5 +1,5 @@
 mandelbrot.run: main.cpp Board.o Client.o Server.o Config.o Utils.o
-	mpicxx main.cpp Board.o Client.o Server.o Config.o Utils.o -o mandelbrot.run
+	mpicxx main.cpp Board.o Client.o Server.o Config.o Utils.o -o mandelbrot.run -lmpe
 
 Board.o: Board.cpp
 	mpicxx -c Board.cpp -o Board.o
