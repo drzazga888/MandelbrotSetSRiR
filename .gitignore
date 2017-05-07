@@ -6,4 +6,5 @@ Makefile
 *.ppm
 *.o
 *.exe
-result.png
+*.png
+*.run

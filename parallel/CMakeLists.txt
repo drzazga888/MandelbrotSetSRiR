@@ -1,0 +1,7 @@
+cmake_minimum_required (VERSION 3.2)
+project (MANDELBROT_SET)
+find_package(MPI REQUIRED)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
+add_executable (mandelbrot.run main.cpp Config.cpp Server.cpp Client.cpp Utils.cpp Board.cpp)
+target_link_libraries (mandelbrot.run m ${MPI_LIBRARIES})
+set_property(TARGET mandelbrot.run PROPERTY CXX_STANDARD 11)

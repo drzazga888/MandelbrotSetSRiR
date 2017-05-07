@@ -1,6 +1,0 @@
-cmake_minimum_required (VERSION 3.2)
-project (MANDELBROT_SET)
-find_package(MPI REQUIRED)
-add_executable (mandelbrot.run main.cpp Config.cpp)
-include_directories(SYSTEM ${MPI_INCLUDE_PATH})
-target_link_libraries (mandelbrot.run m ${MPI_LIBRARIES})
