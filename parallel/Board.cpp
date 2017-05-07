@@ -46,7 +46,7 @@ void Board::moveToNextPoint(){
 	}
 }
 void Board::setPoint(int row, int col, int value){
-	std::cout << "Row: " << row << std::endl;
+//	std::cout << "Row: " << row << std::endl;
 //	std::cout << "Set Point: row: "<< row <<" col: " << col <<" value: " << value <<std::endl;
 	board[row][col] = value;
 }
