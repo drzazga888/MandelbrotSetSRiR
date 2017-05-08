@@ -17,7 +17,6 @@ void Server::run(double startTime){
 	MPI_Request handlersToClients[clientsCount];
 	int dummy;
 	PointInfo valueHandler[clientsCount];
-	//listenForAvailableClients(dummy, clientsCount, handlersToClients);
 	for(int i=0; i<clientsCount; ++i){
 		int clientId = i+1;
 		valueHandler[i].row = board.getCurrentRow();
@@ -62,13 +61,6 @@ void Server::requestWorkTo(int clientId){
 void Server::startListenerForCompletedWork(int clientId, MPI_Request& handle, int &valueHandler){
 //	cout << "Server::start Listener For Completed Work On Client: " << clientId << ", handle: " << &handle << endl;
 	MPI_Irecv(&valueHandler, 1, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, &handle);
-}
-void Server::listenForAvailableClients(int dummy, int clientsCount, MPI_Request *handlersToClients){
-	for(int i=0; i<clientsCount;++i){
-		int clientRank = i+1;
-		MPI_Irecv(&dummy, 1, MPI_INT, clientRank, ItersDataMsg, MPI_COMM_WORLD, 
-				&handlersToClients[i]);
-	}
 }
 int Server::waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients){
 	int receivedResponsesCount;

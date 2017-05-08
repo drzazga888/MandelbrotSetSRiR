@@ -40,32 +40,6 @@ void exportBoardToFile(ostream &out, int **board, double minx, double maxx, doub
     }
 }
 
-int **mandelbrot(double minx, double maxx, double miny, double maxy, double step, double rows, double cols, const int maxiters) {
-    int **board = initBoard(rows, cols);
-    // do the magic
-    
-    double x_mult = (maxx - minx) / (cols - 1);
-    double y_mult = (maxy - miny) / (rows - 1);
-    
-    for (int row = 0; row < rows; ++row) {
-        for (int col = 0; col < cols; ++col) {
-            
-            std::complex<double> c(x_mult * col + minx, y_mult * row + miny);
-            std::complex<double> z = 0 + 0i;
-            
-            int iters = 0;
-            
-            do {
-                z = z * z + c;
-                ++iters;
-            } while (iters < maxiters && fabs(z.real()) <= 2.0);
-            board[row][col] = iters;
-        }
-    }    
-    // magic end
-    return board;
-}
-
 int main(int argc, char *argv[]) {
 	appConfig().initialize(argc, argv);
     int rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);

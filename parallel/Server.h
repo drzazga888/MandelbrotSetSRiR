@@ -12,7 +12,6 @@ class Server
 		int** getBoard();
 	private:
 		Board board;
-		void listenForAvailableClients(int,int, MPI_Request*);
 		int waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients);
 		void startListenerForCompletedWork(int clientId, MPI_Request& handle, int &valueHandle);
 		void requestWorkTo(int clientId);
