@@ -45,10 +45,9 @@ int main(int argc, char *argv[]) {
     int rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);
     int cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
 	MPI_Barrier(MPI_COMM_WORLD);
-	double time = MPI_Wtime();
 	if(appConfig().procRank == SERVER){
 		Server server;
-		server.run(time);	
+		server.run();	
 		int** board = server.getBoard();
 		ofstream ofs("data.txt", ofstream::out);
 		//debugBoard(ofs, board, rows, cols);
@@ -57,7 +56,7 @@ int main(int argc, char *argv[]) {
 		ofs.close();	
 	}
 	else
-		Client().run(time); 
+		Client().run(); 
 	MPI_Barrier(MPI_COMM_WORLD);
 	MPI_Finalize();
     return 0;

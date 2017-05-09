@@ -4,10 +4,8 @@ class Client
 {
 	public:
 		Client();
-		void run(double start);
+		void run();
 	private:
-		int mandelbrot(std::complex<double> c);
+		int mandelbrot(int row, int col, double x_mult, double y_mult);
 		std::complex<double> getC(int* pointData, double x_mult, double y_mult);
-		bool isWorkDone(int*);
-		bool workDone;	
 };

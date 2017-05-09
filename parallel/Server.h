@@ -8,11 +8,14 @@ class Server
 {
 	public:
 		Server();
-		void run(double startTime);
+		void run();
 		int** getBoard();
 	private:
 		Board board;
+		int **tempRows;
+		MPI_Request *handlersToClients;
+		int clientsCount;
 		int waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients);
-		void startListenerForCompletedWork(int clientId, MPI_Request& handle, int &valueHandle);
-		void requestWorkTo(int clientId);
+		void startListenerForCompletedWork(int clientId, MPI_Request& handle, int *promisedRow);
+		int requestWorkTo(int clientId);
 };

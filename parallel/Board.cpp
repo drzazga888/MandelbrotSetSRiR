@@ -5,56 +5,58 @@
 #include <unistd.h>
 
 Board::Board(){
-    rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);
-    cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
-	initBoard();
+    rows = ::getRows(appConfig().miny, appConfig().maxy, appConfig().step);
+    cols = ::getCols(appConfig().minx, appConfig().maxx, appConfig().step);
+	init();
 	currentRow = 0;
-	currentCol = 0;
 }
+
 Board::~Board(){
-	freeBoard();
+	free();
 }
-void Board::freeBoard() {
+
+void Board::free() {
     for (int i = 0; i < rows; ++i) {
          delete[] board[i];
     }
     delete board;
 }
-void Board::initBoard() {
+
+void Board::init() {
     board = new int*[rows];
     for (int i = 0; i < rows; ++i) {
         board[i] = new int[cols];
     }
-    for (int i = 0; i < rows; ++i) {
-    	for (int j = 0; j < cols; ++j) {
-			board[i][j] = 6;
-		}
-	}
 }
-int Board::getCurrentCol(){
-	return currentCol;
+
+int Board::next(){
+    int temp = currentRow;
+    ++currentRow;
+	return temp;
 }
-int Board::getCurrentRow(){
-	return currentRow;
+
+void Board::setRow(int row, int *data) {
+    for (int i = 0; i < cols; ++i) {
+        board[row][i] = data[i];
+    }
 }
-void Board::moveToNextPoint(){
-	if(currentCol == cols-1){
-		++currentRow;
-		currentCol = 0;
-	}else{
-		++currentCol;
-	}
+
+int Board::getRows() {
+    return rows;
 }
-void Board::setPoint(int row, int col, int value){
-//	std::cout << "Row: " << row << std::endl;
-//	std::cout << "Set Point: row: "<< row <<" col: " << col <<" value: " << value <<std::endl;
-	board[row][col] = value;
+
+int Board::getCols() {
+    return cols;
 }
-bool Board::areStillPointsToProcess(){
-	if(getCurrentRow() >= rows-1 && getCurrentCol() >= cols-1)
-		return false;
-	return true;
+
+bool Board::areStillRowsToProcess(){
+	return currentRow < rows;
 }
+
+int* Board::getRow(int row){
+	return board[row];
+}
+
 int** Board::getBoardData(){
 	return board;
 }
