@@ -11,7 +11,7 @@
 #include "MpeLogs.h"
 #endif
 
-const int endMarker = -1;
+int endMarker = -1;
 using namespace std;
 
 Server::Server()
