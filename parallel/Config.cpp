@@ -60,7 +60,7 @@ void Config::initialize(int argc, char* argv[]){
 }
 int Config::getNumOfClients(){
 	if(procCount < MIN_PROC_COUNT){
-		warning(std::string("Dostepna ilosc procesorow: ") + std::to_string(procCount));	
+		warning(std::string("Musisz uzyc conajmniej 2 procesow"));	
 	}
 	return procCount-1; // -1 for one serwer proc	
 }
