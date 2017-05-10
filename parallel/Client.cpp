@@ -53,13 +53,13 @@ void Client::run(){
 		}
 		
 		#ifdef MPE_LOGS
-		MPE_Log_event(SENDING_RESULTS_TO_SERVER_START, 0, "sending results to server - start");
+		MPE_Log_event(SENDING_RESULTS_TO_SERVER_START, 0, "sending results - start");
 		#endif
 		
 		MPI_Send(iters, cols, MPI_INT, serverRank, ItersDataMsg, MPI_COMM_WORLD);
 		
 		#ifdef MPE_LOGS
-		MPE_Log_event(SENDING_RESULTS_TO_SERVER_END, 0, "sending results to server - end");
+		MPE_Log_event(SENDING_RESULTS_TO_SERVER_END, 0, "sending results - end");
 		#endif
 		
 	}
