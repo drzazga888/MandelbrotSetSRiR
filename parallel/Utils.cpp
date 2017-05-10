@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <mpi.h>
+#include <cstdlib>
 
 using std::cerr;
 using std::endl;
