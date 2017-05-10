@@ -2,8 +2,9 @@
 
 #define MIN_PROC_COUNT 2
 #define OUTPUT_CLOG2_FILE "mpe-logs"
-define SERVER_TASK 0
-define END_MARKER 1
+#define SERVER_TASK 0
+#define END_MARKER 1
+#define MAX_ITERS 999
 
 struct Config {
 	double minx;

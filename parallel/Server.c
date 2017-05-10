@@ -7,32 +7,28 @@
 #include "MpeLogs.h"
 #endif
 
-void server_run() {
+void server_run(struct Config *config) {
 	
-	Board board;
-	int **tempRows;
-	MPI_Request *handlersToClients;
-	int clientsCount;
-	
-	int clientsCount = appConfig().getNumOfClients();
-	MPI_Request handlersToClients[clientsCount];
-	int tempNr[clientsCount];
+	struct Board board = board_init(config->rows, config->cols);
+	MPI_Request handlersToClients[config->procCount];
+	int tempNr[config->procCount];
 	int totalComputed = 0;
+	int endMarker = END_MARKER;
 	
-	int **tempRows = new int*[clientsCount];
+	int **tempRows = new int*[config->procCount];
 	for (int i = 0; i < clientsCount; ++i) {
-		tempRows[i] = new int[board.getCols()];
+		tempRows[i] = new int[config->rows];
 	}
 	
-	for(int i=0; board.areStillRowsToProcess() && i<clientsCount; ++i){
+	for(int i=0; board_areStillRowsToProcess(&board) && i<config->procCount; ++i){
 		int clientId = i+1;
-		startListenerForCompletedWork(clientId, handlersToClients[i], tempRows[i]);
+		startListenerForCompletedWork(config->cols, clientId, handlersToClients[i], tempRows[i]);
 		tempNr[i] = requestWorkTo(clientId);
 	}
 	
 	while(true)
 	{
-		int responsiveClients[clientsCount];
+		int responsiveClients[config->procCount];
 		int responsesCount = waitSomeTimeForClientsResponse(clientsCount, handlersToClients, responsiveClients);
 		if (responsesCount < 1) {
 			break;
@@ -45,8 +41,8 @@ void server_run() {
 			board.setRow(tempNr[requestIndex], tempRows[requestIndex]);
 			++totalComputed;
 			
-			if (board.areStillRowsToProcess()) {
-				startListenerForCompletedWork(clientId, handlersToClients[requestIndex], tempRows[requestIndex]);
+			if (board_areStillRowsToProcess(&board)) {
+				startListenerForCompletedWork(config->cols, clientId, handlersToClients[requestIndex], tempRows[requestIndex]);
 				tempNr[requestIndex] = requestWorkTo(clientId);
 			}
 		}
@@ -88,13 +84,13 @@ int requestWorkTo(int clientId){
 	return nextRow;
 }
 
-void startListenerForCompletedWork(int clientId, MPI_Request& handle, int *promisedRow){
+void startListenerForCompletedWork(int cols, int clientId, MPI_Request& handle, int *promisedRow){
 
 	#ifdef MPE_LOGS
 	MPE_Log_event(LISTEN_FOR_WORKER_START, 0, "non-blocking listen - start");
 	#endif
 
-	MPI_Irecv(promisedRow, board.getCols(), MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, &handle);
+	MPI_Irecv(promisedRow, cols, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, &handle);
 	
 	#ifdef MPE_LOGS
 	MPE_Log_event(LISTER_FOR_WORKER_END, 0, "non-blocking listen - end");

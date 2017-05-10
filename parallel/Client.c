@@ -1,35 +1,23 @@
 #include "Client.h"
-#include <iostream>
 #include "MessagesTags.h"
 #include "Config.h"
 #include "Utils.h"
-#include <cmath>
-#include <stdlib.h>
-#include <unistd.h>
+#include <complex.h>
 
 #ifdef MPE_LOGS
 #include "mpe.h"
 #include "MpeLogs.h"
 #endif
 
-using namespace std;
-
-const int maxiters = 999;
-const int serverRank = 0;
 
 Client::Client(){}
 
-void Client::run(){
+void Client::run(struct Config *config){
 	
-	double maxx = appConfig().maxx;
-	double maxy = appConfig().maxy;
-	double minx = appConfig().minx;
-	double miny = appConfig().miny;
-	int cols = getCols(minx, maxx, appConfig().step);
-	double x_mult = (maxx - minx) / (cols - 1);
-	double y_mult = (maxy - miny) / (getRows(miny, maxy, appConfig().step) - 1);
+	double x_mult = (config->maxx - config->minx) / (config->cols - 1);
+	double y_mult = (config->maxy - config->miny) / (config->rows - 1);
 	int row;
-	int iters[cols];
+	int iters[config->cols];
 	
 	while(true)
 	{
@@ -49,7 +37,7 @@ void Client::run(){
 			break;
 		}
 		for (int col = 0; col < cols; ++col) {
-			iters[col] = mandelbrot(row, col, x_mult, y_mult);
+			iters[col] = mandelbrot(config->minx, config->miny, row, col, x_mult, y_mult);
 		}
 		
 		#ifdef MPE_LOGS
@@ -66,13 +54,13 @@ void Client::run(){
 		
 }
 
-int Client::mandelbrot(int row, int col, double x_mult, double y_mult){
-	std::complex<double> c(x_mult * col + appConfig().minx, y_mult * row + appConfig().miny);
-	std::complex<double> z = 0 + 0i;	
+int mandelbrot(int minx, int miny, int row, int col, double x_mult, double y_mult){
+	double complex c = (x_mult * col + minx) + (y_mult * row + miny) * I;
+	double complex z = 0;	
 	int iters = 0;   
 	do {
 		z = z * z + c;
 		++iters;
-	} while (iters < maxiters && fabs(z.real()) <= 2.0);
+	} while (iters < maxiters && fabs(creal(z)) <= 2.0);
 	return iters;
 }
