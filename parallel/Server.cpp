@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 #ifdef MPE_LOGS
-#include <mpe.h>
+#include "mpe.h"
 #include "MpeLogs.h"
 #endif
 
