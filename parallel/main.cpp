@@ -58,7 +58,12 @@ int main(int argc, char *argv[]) {
 	if(appConfig().procRank == SERVER){
         
         #ifdef MPE_LOGS
-        MPE_Describe_state(REQ_TO_WORK_SEND_START, REQ_TO_WORK_SEND_END, "request to work - send", "red");
+        MPE_Describe_state(REQ_TO_WORK_SEND_START, REQ_TO_WORK_SEND_END, "request to work - send order (row number)", "red");
+        MPE_Describe_state(LISTEN_FOR_WORKER_START, LISTER_FOR_WORKER_END, "non-blocking listen for completed work from worker - irecv", "orange");
+        MPE_Describe_state(WAITING_FOR_WORKER_START, WAITING_FOR_WORKER_END, "waiting for response from any worker - waitsome", "yellow");
+        MPE_Describe_state(SENDING_END_MARKER_START, SENDING_END_MARKER_END, "sending end-of-work marker (-1) - send", "green");
+        MPE_Describe_state(WAITING_FOR_ORDER_START, WAITING_FOR_ORDER_END, "waiting for order (row number) from server - recv", "blue");
+        MPE_Describe_state(SENDING_RESULTS_TO_SERVER_START, SENDING_RESULTS_TO_SERVER_END, "sending back results (whole computed row) to server - send", "pink");
         #endif
         
 		Server server;

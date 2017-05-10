@@ -59,7 +59,16 @@ void Server::run(){
 	}
 	
 	for(int i=0; i<clientsCount; ++i){
+		
+		#ifdef MPE_LOGS
+		MPE_Log_event(SENDING_END_MARKER_START, 0, "sending end-of-work marker - start");
+		#endif
+		
 		MPI_Send(&endMarker, 1, MPI_INT, i+1, ItersDataMsg, MPI_COMM_WORLD);
+		
+		#ifdef MPE_LOGS
+		MPE_Log_event(SENDING_END_MARKER_END, 0, "sending end-of-work marker - end");
+		#endif
 	}
 		
 	for (int i = 0; i < clientsCount; ++i) {
@@ -73,26 +82,45 @@ int Server::requestWorkTo(int clientId){
 	int nextRow = board.next();
 	
 	#ifdef MPE_LOGS
-	MPE_Log_event(REQ_TO_WORK_SEND_START, 0, "request to work send start");
+	MPE_Log_event(REQ_TO_WORK_SEND_START, 0, "request to work send - start");
 	#endif
 	
 	MPI_Send(&nextRow, 1, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD);
 	
 	#ifdef MPE_LOGS
-	MPE_Log_event(REQ_TO_WORK_SEND_END, 0, "request to work send end");
+	MPE_Log_event(REQ_TO_WORK_SEND_END, 0, "request to work send - end");
 	#endif
 	
 	return nextRow;
 }
 
 void Server::startListenerForCompletedWork(int clientId, MPI_Request& handle, int *promisedRow){
+
+	#ifdef MPE_LOGS
+	MPE_Log_event(LISTEN_FOR_WORKER_START, 0, "non-blocking listen for completed work - start");
+	#endif
+
 	MPI_Irecv(promisedRow, board.getCols(), MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, &handle);
+	
+	#ifdef MPE_LOGS
+	MPE_Log_event(LISTER_FOR_WORKER_END, 0, "non-blocking listen for completed work - end");
+	#endif
 }
 
 int Server::waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients){
 	int receivedResponsesCount;
 	MPI_Status responsesStatuses[clientsCount];
+	
+	#ifdef MPE_LOGS
+	MPE_Log_event(WAITING_FOR_WORKER_START, 0, "waiting for any worker - start");
+	#endif
+	
 	MPI_Waitsome(clientsCount, handlersToClients, &receivedResponsesCount, responsiveClients, responsesStatuses);
+
+	#ifdef MPE_LOGS
+	MPE_Log_event(WAITING_FOR_WORKER_END, 0, "waiting for any worker - end");
+	#endif
+	
 	return receivedResponsesCount;
 }
 

@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifdef MPE_LOGS
+#include <mpe.h>
+#include "MpeLogs.h"
+#endif
+
 using namespace std;
 
 const int maxiters = 999;
@@ -29,14 +34,34 @@ void Client::run(){
 	while(true)
 	{
 		MPI_Status status;
+
+		#ifdef MPE_LOGS
+		MPE_Log_event(WAITING_FOR_ORDER_START, 0, "waiting for server - start");
+		#endif
+		
 		MPI_Recv(&row, 1, MPI_INT, serverRank, ItersDataMsg, MPI_COMM_WORLD, &status);
+		
+		#ifdef MPE_LOGS
+		MPE_Log_event(WAITING_FOR_ORDER_END, 0, "waiting for server - end");
+		#endif
+		
 		if (row == -1) {
 			break;
 		}
 		for (int col = 0; col < cols; ++col) {
 			iters[col] = mandelbrot(row, col, x_mult, y_mult);
 		}
+		
+		#ifdef MPE_LOGS
+		MPE_Log_event(SENDING_RESULTS_TO_SERVER_START, 0, "sending results to server - start");
+		#endif
+		
 		MPI_Send(iters, cols, MPI_INT, serverRank, ItersDataMsg, MPI_COMM_WORLD);
+		
+		#ifdef MPE_LOGS
+		MPE_Log_event(SENDING_RESULTS_TO_SERVER_END, 0, "sending results to server - end");
+		#endif
+		
 	}
 		
 }
