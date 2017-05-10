@@ -52,7 +52,7 @@ void Config::initialize(int argc, char* argv[]){
 	{
 		error("Problem przy inicjalizacji MPI");
 	}
-	cout << "MPE_Init_log(); "<< endl;
+	cout << "MPE_Init_log(), procrank: " << procCount << endl;
 	#ifdef MPE_LOGS
     MPE_Init_log();
     #endif
