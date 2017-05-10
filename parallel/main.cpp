@@ -48,10 +48,6 @@ void exportBoardToFile(ostream &out, int **board, double minx, double maxx, doub
 int main(int argc, char *argv[]) {
 	appConfig().initialize(argc, argv);
     
-    #ifdef MPE_LOGS
-    MPE_Init_log();
-    #endif
-    
     int rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);
     int cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
 	MPI_Barrier(MPI_COMM_WORLD);

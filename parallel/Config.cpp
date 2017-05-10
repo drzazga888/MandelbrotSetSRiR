@@ -5,6 +5,10 @@
 #include "Utils.h"
 #include <string>
 
+#ifdef MPE_LOGS
+#include "mpe.h"
+#endif
+
 //Because we employ manager-workers design, there
 //should be at least 2 processors
 const int MIN_PROC_COUNT = 2; 
@@ -48,6 +52,11 @@ void Config::initialize(int argc, char* argv[]){
 	{
 		error("Problem przy inicjalizacji MPI");
 	}
+	
+	#ifdef MPE_LOGS
+    MPE_Init_log();
+    #endif
+	
 	if (MPI_Comm_size(MPI_COMM_WORLD, &procCount) != MPI_SUCCESS) {
 		error("Nie mozna odczytac liczby procesorow");	
 		MPI_Finalize();
