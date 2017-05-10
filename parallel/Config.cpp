@@ -52,10 +52,8 @@ void Config::initialize(int argc, char* argv[]){
 	{
 		error("Problem przy inicjalizacji MPI");
 	}
-	cout << "MPE_Init_log(), procrank: " << procCount << endl;
-	#ifdef MPE_LOGS
-    MPE_Init_log();
-    #endif
+	
+
 	cout << "if (MPI_Comm_size "<< endl;
 	if (MPI_Comm_size(MPI_COMM_WORLD, &procCount) != MPI_SUCCESS) {
 		error("Nie mozna odczytac liczby procesorow");	
@@ -66,6 +64,10 @@ void Config::initialize(int argc, char* argv[]){
 		error("Nie mozna odczytac numeru procesu");
 		MPI_Finalize();
 	}
+cout << "MPE_Init_log(), procrank: " << procRank << endl;
+	#ifdef MPE_LOGS
+	    MPE_Init_log();
+	    #endif
 	cout << "END_if (MPI_Comm_rank "<< endl;
 }
 int Config::getNumOfClients(){
