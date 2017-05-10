@@ -1,24 +1,18 @@
 #include "Server.h"
-#include <iostream>
-#include <vector>
 #include "Config.h"
 #include "Utils.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 #ifdef MPE_LOGS
 #include "mpe.h"
 #include "MpeLogs.h"
 #endif
 
-int endMarker = -1;
-using namespace std;
-
-Server::Server()
-{
-}
-
-void Server::run(){
+void server_run() {
+	
+	Board board;
+	int **tempRows;
+	MPI_Request *handlersToClients;
+	int clientsCount;
 	
 	int clientsCount = appConfig().getNumOfClients();
 	MPI_Request handlersToClients[clientsCount];
@@ -78,7 +72,7 @@ void Server::run(){
 	
 }
 
-int Server::requestWorkTo(int clientId){
+int requestWorkTo(int clientId){
 	int nextRow = board.next();
 	
 	#ifdef MPE_LOGS
@@ -94,7 +88,7 @@ int Server::requestWorkTo(int clientId){
 	return nextRow;
 }
 
-void Server::startListenerForCompletedWork(int clientId, MPI_Request& handle, int *promisedRow){
+void startListenerForCompletedWork(int clientId, MPI_Request& handle, int *promisedRow){
 
 	#ifdef MPE_LOGS
 	MPE_Log_event(LISTEN_FOR_WORKER_START, 0, "non-blocking listen - start");
@@ -107,7 +101,7 @@ void Server::startListenerForCompletedWork(int clientId, MPI_Request& handle, in
 	#endif
 }
 
-int Server::waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients){
+int waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients){
 	int receivedResponsesCount;
 	MPI_Status responsesStatuses[clientsCount];
 	
@@ -122,8 +116,4 @@ int Server::waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handle
 	#endif
 	
 	return receivedResponsesCount;
-}
-
-int** Server::getBoard(){
-	return board.getBoardData();	
 }

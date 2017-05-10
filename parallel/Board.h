@@ -1,26 +1,15 @@
 #pragma once
 
-class Board{
-	
-	public:
-		
-		Board();
-		~Board();
-		int getRows();
-		int getCols();
-		int next();
-		void setRow(int row, int *data);
-		bool areStillRowsToProcess();
-		int* getRow(int row);
-		int** getBoardData();
-
-	private:
-		
-		int** board;
-		int currentRow;
-		int rows;
-		int cols;
-		void init();
-		void free();
-		
+struct Board {
+	int** board;
+	int currentRow;
+	int rows;
+	int cols;
 };
+
+struct Board board_init(int rows, int cols);
+void board_free(struct Board *board);
+int board_next(struct Board *board);
+void board_setRow(struct Board *board, int row, int *data);
+bool board_areStillRowsToProcess(struct Board *board);
+int* board_getRow(struct Board *board, int row);
