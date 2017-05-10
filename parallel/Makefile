@@ -10,22 +10,22 @@ mpelogs: LIBRARIES += -lmpe
 mpelogs: DEFINES += -D MPE_LOGS
 mpelogs: mandelbrot.run
 
-mandelbrot.run: main.cpp Board.o Client.o Server.o Config.o Utils.o
-	$(CC) main.cpp Board.o Client.o Server.o Config.o Utils.o -o mandelbrot.run $(INCL_PATHS) $(LIB_PATHS) $(LIBRARIES) $(DEFINES)
+mandelbrot.run: Board.o Client.o Server.o Config.o Utils.o
+	$(CC) main.c Board.o Client.o Server.o Config.o Utils.o -o mandelbrot.run $(INCL_PATHS) $(LIB_PATHS) $(LIBRARIES) $(DEFINES)
 
-Board.o: Board.cpp
+Board.o: Board.c
 	$(CC)  -c Board.c -o Board.o $(INCL_PATHS) $(DEFINES)
 	
-Client.o: Client.cpp
+Client.o: Client.c
 	$(CC)  -c Client.c -o Client.o $(INCL_PATHS) $(DEFINES)
 	
-Server.o: Server.cpp
+Server.o: Server.c
 	$(CC)  -c Server.c -o Server.o $(INCL_PATHS) $(DEFINES)
 	
-Config.o: Config.cpp
+Config.o: Config.c
 	$(CC)  -c Config.c -o Config.o $(INCL_PATHS) $(DEFINES)
 	
-Utils.o: Utils.cpp
+Utils.o: Utils.c
 	$(CC)  -c Utils.c -o Utils.o $(INCL_PATHS) $(DEFINES)
 
 .PHONY: clean

@@ -1,6 +1,7 @@
 #include "Board.h"
 #include "Config.h"
 #include "Utils.h"
+#include <stdlib.h>
 
 struct Board board_init(int rows, int cols) {
     
@@ -10,19 +11,19 @@ struct Board board_init(int rows, int cols) {
     board.cols = cols;
     board.currentRow = 0;
     
-    board.board = new int*[rows];
+    board.board = (int **) malloc(sizeof(int*) * rows);
     for (int i = 0; i < rows; ++i) {
-        board.board[i] = new int[cols];
+        board.board[i] = (int *) malloc(sizeof(int) * cols);
     }
     
-	return board
+	return board;
 }
 
 void board_free(struct Board *board) {
-    for (int i = 0; i < rows; ++i) {
-         delete[] board->board[i];
+    for (int i = 0; i < board->rows; ++i) {
+         free(board->board[i]);
     }
-    delete[] board->board;
+    free(board->board);
 }
 
 int board_next(struct Board *board){
@@ -32,7 +33,7 @@ int board_next(struct Board *board){
 }
 
 void board_setRow(struct Board *board, int row, int *data) {
-    for (int i = 0; i < cols; ++i) {
+    for (int i = 0; i < board->cols; ++i) {
         board->board[row][i] = data[i];
     }
 }

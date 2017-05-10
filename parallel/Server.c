@@ -1,54 +1,60 @@
 #include "Server.h"
 #include "Config.h"
 #include "Utils.h"
+#include <stdlib.h>
 
 #ifdef MPE_LOGS
 #include "mpe.h"
-#include "MpeLogs.h"
 #endif
 
 void server_run(struct Config *config) {
 	
 	struct Board board = board_init(config->rows, config->cols);
-	MPI_Request handlersToClients[config->procCount];
-	int tempNr[config->procCount];
-	int totalComputed = 0;
+	int workersCount = config->procCount - 1;
+	MPI_Request handlersToClients[workersCount];
+	int tempNr[workersCount];
 	int endMarker = END_MARKER;
+	int requestsSent = 0;
 	
-	int **tempRows = new int*[config->procCount];
-	for (int i = 0; i < clientsCount; ++i) {
-		tempRows[i] = new int[config->rows];
+	int **tempRows = (int **) malloc(sizeof(int*) * workersCount);
+	for (int i = 0; i < workersCount; ++i) {
+		tempRows[i] = (int *) malloc(sizeof(int) * config->rows);
 	}
 	
-	for(int i=0; board_areStillRowsToProcess(&board) && i<config->procCount; ++i){
+	for(int i=0; board_areStillRowsToProcess(&board) && i<workersCount; ++i){
 		int clientId = i+1;
-		startListenerForCompletedWork(config->cols, clientId, handlersToClients[i], tempRows[i]);
-		tempNr[i] = requestWorkTo(clientId);
+		startListenerForCompletedWork(config->cols, clientId, &handlersToClients[i], tempRows[i]);
+		tempNr[i] = requestWorkTo(&board, clientId);
 	}
 	
 	while(true)
 	{
-		int responsiveClients[config->procCount];
-		int responsesCount = waitSomeTimeForClientsResponse(clientsCount, handlersToClients, responsiveClients);
+		int responsiveClients[workersCount];
+		int responsesCount = waitSomeTimeForClientsResponse(workersCount, handlersToClients, responsiveClients);
+		
 		if (responsesCount < 1) {
 			break;
 		}
+		
 		for(int i=0; i<responsesCount; ++i)
 		{
 			int requestIndex = responsiveClients[i];
 			int clientId = requestIndex+1;
 			
-			board.setRow(tempNr[requestIndex], tempRows[requestIndex]);
-			++totalComputed;
+			board_setRow(&board, tempNr[requestIndex], tempRows[requestIndex]);
+			
+			/*if (requestsSent >= config->rows) {
+				handlersToClients[requestIndex] = MPI_REQUEST_NULL;
+			}*/
 			
 			if (board_areStillRowsToProcess(&board)) {
-				startListenerForCompletedWork(config->cols, clientId, handlersToClients[requestIndex], tempRows[requestIndex]);
-				tempNr[requestIndex] = requestWorkTo(clientId);
+				startListenerForCompletedWork(config->cols, clientId, &handlersToClients[requestIndex], tempRows[requestIndex]);
+				tempNr[requestIndex] = requestWorkTo(&board, clientId);
 			}
 		}
 	}
 	
-	for(int i=0; i<clientsCount; ++i){
+	for(int i=0; i<workersCount; ++i){
 		
 		#ifdef MPE_LOGS
 		MPE_Log_event(SENDING_END_MARKER_START, 0, "sending end-of-work - start");
@@ -60,16 +66,20 @@ void server_run(struct Config *config) {
 		MPE_Log_event(SENDING_END_MARKER_END, 0, "sending end-of-work - end");
 		#endif
 	}
+	
+	exportBoardToFile(config, &board);
 		
-	for (int i = 0; i < clientsCount; ++i) {
-         delete[] tempRows[i];
+	for (int i = 0; i < workersCount; ++i) {
+         free(tempRows[i]);
     }
-    delete[] tempRows;
+    free(tempRows);
+	
+	board_free(&board);
 	
 }
 
-int requestWorkTo(int clientId){
-	int nextRow = board.next();
+int requestWorkTo(struct Board *board, int clientId){
+	int nextRow = board_next(board);
 	
 	#ifdef MPE_LOGS
 	MPE_Log_event(REQ_TO_WORK_SEND_START, 0, "request to work send - start");
@@ -84,20 +94,20 @@ int requestWorkTo(int clientId){
 	return nextRow;
 }
 
-void startListenerForCompletedWork(int cols, int clientId, MPI_Request& handle, int *promisedRow){
+void startListenerForCompletedWork(int cols, int clientId, MPI_Request *handle, int *promisedRow){
 
 	#ifdef MPE_LOGS
 	MPE_Log_event(LISTEN_FOR_WORKER_START, 0, "non-blocking listen - start");
 	#endif
 
-	MPI_Irecv(promisedRow, cols, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, &handle);
+	MPI_Irecv(promisedRow, cols, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD, handle);
 	
 	#ifdef MPE_LOGS
 	MPE_Log_event(LISTER_FOR_WORKER_END, 0, "non-blocking listen - end");
 	#endif
 }
 
-int waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int* responsiveClients){
+int waitSomeTimeForClientsResponse(int clientsCount, MPI_Request* handlersToClients, int *responsiveClients){
 	int receivedResponsesCount;
 	MPI_Status responsesStatuses[clientsCount];
 	

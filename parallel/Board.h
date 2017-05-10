@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 struct Board {
 	int** board;
 	int currentRow;

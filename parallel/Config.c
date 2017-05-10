@@ -1,6 +1,13 @@
 #include "Config.h"
 #include <mpi.h>
 #include "Utils.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+#ifdef MPE_LOGS
+#include "mpe.h"
+#endif
 
 struct Config app_init(int argc, char* argv[]){
 	
@@ -51,7 +58,9 @@ struct Config app_init(int argc, char* argv[]){
 	
 	if (config.procCount < MIN_PROC_COUNT) {
 		MPI_Finalize();
-		error(sprintf("Musisz uzyc conajmniej %d procesow", MIN_PROC_COUNT));	
+		char text[40];
+		sprintf(text, "Musisz uzyc conajmniej %d procesow", MIN_PROC_COUNT);
+		error(text);	
 	}
 	
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -68,6 +77,8 @@ struct Config app_init(int argc, char* argv[]){
         #endif
 		
 	}
+	
+	return config;
 	
 }
 
