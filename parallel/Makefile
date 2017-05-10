@@ -5,7 +5,7 @@ LIB_PATHS =
 
 all: mandelbrot.run
 
-mpelogs: LIBRARIES += -lmpe
+mpelogs: LIBRARIES += -lmpe -lpthread
 mpelogs: DEFINES += -D MPE_LOGS
 mpelogs: mandelbrot.run
 
