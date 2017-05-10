@@ -7,6 +7,11 @@
 #include "Client.h"
 #include "Utils.h"
 
+#ifdef MPE_LOGS
+#include <mpe.h>
+#include "MpeLogs.h"
+#endif
+
 using std::cout;
 using std::endl;
 using std::cerr;
@@ -42,10 +47,20 @@ void exportBoardToFile(ostream &out, int **board, double minx, double maxx, doub
 
 int main(int argc, char *argv[]) {
 	appConfig().initialize(argc, argv);
+    
+    #ifdef MPE_LOGS
+    MPE_Init_log();
+    #endif
+    
     int rows = getRows(appConfig().miny, appConfig().maxy, appConfig().step);
     int cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
 	MPI_Barrier(MPI_COMM_WORLD);
 	if(appConfig().procRank == SERVER){
+        
+        #ifdef MPE_LOGS
+        MPE_Describe_state(REQ_TO_WORK_SEND_START, REQ_TO_WORK_SEND_END, "request to work - send", "red");
+        #endif
+        
 		Server server;
 		server.run();	
 		int** board = server.getBoard();
@@ -58,6 +73,11 @@ int main(int argc, char *argv[]) {
 	else
 		Client().run(); 
 	MPI_Barrier(MPI_COMM_WORLD);
+    
+    #ifdef MPE_LOGS
+    MPE_Finish_log("mpe-logs");
+    #endif
+    
 	MPI_Finalize();
     return 0;
 }

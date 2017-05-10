@@ -6,6 +6,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifdef MPE_LOGS
+#include <mpe.h>
+#include "MpeLogs.h"
+#endif
+
 const int endMarker = -1;
 using namespace std;
 
@@ -66,7 +71,17 @@ void Server::run(){
 
 int Server::requestWorkTo(int clientId){
 	int nextRow = board.next();
+	
+	#ifdef MPE_LOGS
+	MPE_Log_event(REQ_TO_WORK_SEND_START, 0, "request to work send start");
+	#endif
+	
 	MPI_Send(&nextRow, 1, MPI_INT, clientId, ItersDataMsg, MPI_COMM_WORLD);
+	
+	#ifdef MPE_LOGS
+	MPE_Log_event(REQ_TO_WORK_SEND_END, 0, "request to work send end");
+	#endif
+	
 	return nextRow;
 }
 

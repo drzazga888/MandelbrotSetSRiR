@@ -6,3 +6,5 @@
 *.run
 data.txt
 .DS_Store
+*.clog2
+*.slog2
