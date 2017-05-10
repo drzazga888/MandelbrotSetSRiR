@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
     int cols = getCols(appConfig().minx, appConfig().maxx, appConfig().step);
 	MPI_Barrier(MPI_COMM_WORLD);
 	if(appConfig().procRank == SERVER){
-        
+
+        cout << "MPE_Describe_state "<< endl;
         #ifdef MPE_LOGS
         MPE_Describe_state(REQ_TO_WORK_SEND_START, REQ_TO_WORK_SEND_END, "request to work", "red");
         MPE_Describe_state(LISTEN_FOR_WORKER_START, LISTER_FOR_WORKER_END, "non-blocking listen", "orange");
@@ -61,9 +62,11 @@ int main(int argc, char *argv[]) {
         MPE_Describe_state(WAITING_FOR_ORDER_START, WAITING_FOR_ORDER_END, "waiting for order (row number)", "blue");
         MPE_Describe_state(SENDING_RESULTS_TO_SERVER_START, SENDING_RESULTS_TO_SERVER_END, "sending back results", "pink");
         #endif
-        
+        cout << "Server server "<< endl;
 		Server server;
+cout << "server.run() "<< endl;
 		server.run();	
+cout << "END_server.run( "<< endl;
 		int** board = server.getBoard();
 		ofstream ofs("data.txt", ofstream::out);
 		//debugBoard(ofs, board, rows, cols);
@@ -72,7 +75,11 @@ int main(int argc, char *argv[]) {
 		ofs.close();	
 	}
 	else
+	{
+		cout << "Client().run() "<< endl;
 		Client().run(); 
+	}
+
 	MPI_Barrier(MPI_COMM_WORLD);
     
     #ifdef MPE_LOGS

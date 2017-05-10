@@ -52,20 +52,21 @@ void Config::initialize(int argc, char* argv[]){
 	{
 		error("Problem przy inicjalizacji MPI");
 	}
-	
+	cout << "MPE_Init_log(); "<< endl;
 	#ifdef MPE_LOGS
     MPE_Init_log();
     #endif
-	
+	cout << "if (MPI_Comm_size "<< endl;
 	if (MPI_Comm_size(MPI_COMM_WORLD, &procCount) != MPI_SUCCESS) {
 		error("Nie mozna odczytac liczby procesorow");	
 		MPI_Finalize();
 	}
-
+	cout << "if (MPI_Comm_rank "<< endl;
 	if (MPI_Comm_rank(MPI_COMM_WORLD, &procRank) != MPI_SUCCESS) {
 		error("Nie mozna odczytac numeru procesu");
 		MPI_Finalize();
 	}
+	cout << "END_if (MPI_Comm_rank "<< endl;
 }
 int Config::getNumOfClients(){
 	if(procCount < MIN_PROC_COUNT){
