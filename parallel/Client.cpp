@@ -34,16 +34,19 @@ void Client::run(){
 	while(true)
 	{
 		MPI_Status status;
-
+		cout << "MPE_Log_event(WAITING_FOR_ORDER_START: " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(WAITING_FOR_ORDER_START, 0, "waiting for server - start");
 		#endif
 		
+		cout << "MPI_Recv(&row: " << endl;
 		MPI_Recv(&row, 1, MPI_INT, serverRank, ItersDataMsg, MPI_COMM_WORLD, &status);
 		
+		cout << "MPE_Log_event(WAITING_FOR_ORDER_EN: " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(WAITING_FOR_ORDER_END, 0, "waiting for server - end");
 		#endif
+		cout << "END_MPE_Log_event(WAITING_FOR_ORDER_EN: " << endl;
 		
 		if (row == -1) {
 			break;
@@ -51,17 +54,21 @@ void Client::run(){
 		for (int col = 0; col < cols; ++col) {
 			iters[col] = mandelbrot(row, col, x_mult, y_mult);
 		}
+		cout << "mandelbrot " << endl;
 		
+cout << "MPE_Log_event(SENDING_RESULTS_TO_SERVER_START " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(SENDING_RESULTS_TO_SERVER_START, 0, "sending results - start");
 		#endif
 		
+cout << "MPI_Send(iters, cols" << endl;
 		MPI_Send(iters, cols, MPI_INT, serverRank, ItersDataMsg, MPI_COMM_WORLD);
 		
+cout << "MPE_Log_event(SENDING_RESULTS_TO_SERVER_END " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(SENDING_RESULTS_TO_SERVER_END, 0, "sending results - end");
 		#endif
-		
+cout << "END_MPE_Log_event(SENDING_RESULTS_TO_SERVER_END: " << endl;
 	}
 		
 }

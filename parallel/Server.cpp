@@ -39,6 +39,7 @@ void Server::run(){
 	while(true)
 	{
 		int responsiveClients[clientsCount];
+		cout << "waitSomeTimeForClientsResponse: " << endl;
 		int responsesCount = waitSomeTimeForClientsResponse(clientsCount, handlersToClients, responsiveClients);
 		if (responsesCount < 1) {
 			break;
@@ -47,34 +48,43 @@ void Server::run(){
 		{
 			int requestIndex = responsiveClients[i];
 			int clientId = requestIndex+1;
-			
+			cout << "setRow: " << endl;
 			board.setRow(tempNr[requestIndex], tempRows[requestIndex]);
 			++totalComputed;
-			
+			cout << "areStillRowsToProcess: " << endl;
 			if (board.areStillRowsToProcess()) {
+				cout << "startListenerForCompletedWork: " << endl;
 				startListenerForCompletedWork(clientId, handlersToClients[requestIndex], tempRows[requestIndex]);
+				cout << "requestWorkTo: " << endl;
 				tempNr[requestIndex] = requestWorkTo(clientId);
+				cout << "END_requestWorkTo: " << endl;
 			}
 		}
 	}
 	
 	for(int i=0; i<clientsCount; ++i){
-		
+		cout << "MPE_Log_event(SENDING_END_MARKER_START: " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(SENDING_END_MARKER_START, 0, "sending end-of-work - start");
 		#endif
-		
+
+		cout << "MPI_Send(&endMarker: " << endl;
 		MPI_Send(&endMarker, 1, MPI_INT, i+1, ItersDataMsg, MPI_COMM_WORLD);
-		
+
+		cout << "MPE_Log_event(SENDING_END_MARKER_END: " << endl;
 		#ifdef MPE_LOGS
 		MPE_Log_event(SENDING_END_MARKER_END, 0, "sending end-of-work - end");
 		#endif
+		cout << "END_MPE_Log_event(SENDING_END_MARKER_END: " << endl;
 	}
-		
+	
+	cout << "delete[] tempRows[i]; " << endl;
 	for (int i = 0; i < clientsCount; ++i) {
          delete[] tempRows[i];
-    }
+    	}
+	cout << "END_delete[] tempRows[i]; " << endl;
     delete[] tempRows;
+	cout << "delete[] tempRows; " << endl;
 	
 }
 
