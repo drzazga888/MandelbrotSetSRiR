@@ -11,10 +11,10 @@ step_sizes=(0.000005 0.000005 0.00025 0.0025 0.005)
 if [ ! -f /opt/nfs/mpich-3.2/bin/mpiexec ]; 
 then
 	echo "Ostrzeżenie: w ścieżce /opt/nfs/mpich-3.2/bin/ nie znaleziono poprawnego mpiexec"
-	#exit
+	exit
 fi
 run_command="/opt/nfs/mpich-3.2/bin/mpiexec -n 4 ./mandelbrot.run"
-run_command="mpiexec -n 4 ./mandelbrot.run"
+echo $run_command
 
 if [ ! -d "$dataDir" ];
 then
