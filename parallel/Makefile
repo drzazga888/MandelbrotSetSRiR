@@ -9,6 +9,9 @@ mpelogs: LIBRARIES += -lmpe -lpthread
 mpelogs: DEFINES += -D MPE_LOGS
 mpelogs: mandelbrot.run
 
+examples: 
+	./examples.sh
+
 mandelbrot.run: main.cpp Board.o Client.o Server.o Config.o Utils.o
 	$(CC) main.cpp Board.o Client.o Server.o Config.o Utils.o -o mandelbrot.run $(INCL_PATHS) $(LIB_PATHS) $(LIBRARIES) $(DEFINES)
 
@@ -29,4 +32,4 @@ Utils.o: Utils.cpp
 
 .PHONY: clean
 clean:
-	rm -f *.o mandelbrot.run data.txt result.png *.clog2 *.slog2
+	rm -f *.o mandelbrot.run data.txt result.png *.png *.clog2 *.slog2 
