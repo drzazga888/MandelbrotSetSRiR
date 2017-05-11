@@ -9,7 +9,7 @@ set pm3d map
 set palette
 set colorbox
 set lmargin 0
-
+set size ratio -1
 set terminal png size 1920,1080 enhanced font 'Verdana,10'
 set output 'result.png'
 
